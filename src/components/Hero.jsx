@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 
 const Hero = () => {
     return (
+        // Main hero section - full viewport height for impact
         <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
             {/* Background Image with Overlay */}
             <div className="absolute inset-0 z-0">
@@ -17,6 +18,7 @@ const Hero = () => {
 
             {/* Content */}
             <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left">
+                {/* Animate content on page load for a nice entrance effect */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -52,7 +54,7 @@ const Hero = () => {
                 </motion.div>
             </div>
 
-            {/* Scroll Indicator */}
+            {/* Scroll Indicator - subtle hint to scroll down */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

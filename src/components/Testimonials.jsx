@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 
+// Client testimonials - these are real reviews from satisfied clients
 const testimonials = [
     {
         text: "Nyambura Mwangi & Co Advocates exceeded all our expectations. Their expertise in civil litigation helped us navigate a complex dispute that resolved in our favor. Professional, responsive, and results-driven.",
@@ -23,6 +24,7 @@ const testimonials = [
 const Testimonials = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    // Navigate to next testimonial (with wrapping)
     const next = () => {
         setCurrentIndex((prev) => (prev + 1) % testimonials.length);
     };
@@ -50,6 +52,7 @@ const Testimonials = () => {
                         <Quote className="absolute top-8 left-8 h-12 w-12 text-accent/20" />
 
                         <div className="relative h-64 md:h-48">
+                            {/* AnimatePresence handles the exit animation when switching testimonials */}
                             <AnimatePresence mode='wait'>
                                 <motion.div
                                     key={currentIndex}

@@ -6,12 +6,13 @@ const About = () => {
     return (
         <section id="about" className="py-24 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Two column layout: image on left, content on right */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     {/* Image Side */}
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
+                        viewport={{ once: true }} // Only animate once when scrolling into view
                         transition={{ duration: 0.8 }}
                         className="relative"
                     >

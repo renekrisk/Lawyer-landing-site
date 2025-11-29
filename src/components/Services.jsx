@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Scale, Users, Home, Briefcase, Heart, Gavel } from 'lucide-react';
 
+// Service offerings - can easily add more here as the firm expands
 const services = [
     {
         icon: Scale,
@@ -49,13 +50,14 @@ const Services = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {/* Stagger the animation for each card */}
                     {services.map((service, index) => (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: index * 0.1, duration: 0.5 }}
+                            transition={{ delay: index * 0.1, duration: 0.5 }} // Delay based on index for cascade effect
                             className="bg-white p-8 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group border border-slate-100"
                         >
                             <div className="w-14 h-14 bg-primary/5 rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
