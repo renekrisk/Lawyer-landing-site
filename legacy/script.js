@@ -1,7 +1,8 @@
-// ===== MODERN JAVASCRIPT FOR MANHATTAN LEGAL ASSOCIATES =====
+/* ===== MODERN JAVASCRIPT FOR MANHATTAN LEGAL ASSOCIATES ===== */
 
 class ManhattanLegalApp {
     constructor() {
+        this.testimonialInterval = null;
         this.init();
     }
 
@@ -14,17 +15,19 @@ class ManhattanLegalApp {
         this.setupAccessibility();
     }
 
-    // ===== EVENT LISTENERS =====
+    /* ===== EVENT LISTENERS ===== */
     setupEventListeners() {
-        // Mobile navigation toggle (new navbar)
+        // Mobile nav toggle
         const navToggle = document.getElementById('navToggle');
         const navDrawer = document.getElementById('navDrawer');
+
         if (navToggle && navDrawer) {
             navToggle.addEventListener('click', () => {
                 const open = navToggle.getAttribute('aria-expanded') === 'true';
                 navToggle.setAttribute('aria-expanded', String(!open));
                 navDrawer.classList.toggle('open');
             });
+
             document.querySelectorAll('#navDrawer .nav-link').forEach(link => {
                 link.addEventListener('click', () => {
                     navDrawer.classList.remove('open');
@@ -33,147 +36,129 @@ class ManhattanLegalApp {
             });
         }
 
-        // Smooth scrolling for anchor links
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = document.querySelector(anchor.getAttribute('href'));
+                const targetID = anchor.getAttribute('href');
+                if (!targetID || targetID === '#') return;
+
+                const target = document.querySelector(targetID);
                 if (target) {
-                    const offsetTop = target.offsetTop - 80; // Account for fixed navbar
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
+                    e.preventDefault();
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({ top: offsetTop, behavior: 'smooth' });
                 }
             });
         });
 
-        // Close mobile menu when clicking outside
+        // Auto-close drawer on outside click
         document.addEventListener('click', (e) => {
-            if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-                document.body.classList.remove('nav-open');
+            if (navDrawer && navToggle) {
+                if (!navDrawer.contains(e.target) && !navToggle.contains(e.target)) {
+                    navDrawer.classList.remove('open');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                }
             }
         });
 
-        // Keyboard navigation
+        // Escape closes drawer
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-                document.body.classList.remove('nav-open');
+            if (e.key === 'Escape' && navDrawer && navToggle) {
+                navDrawer.classList.remove('open');
+                navToggle.setAttribute('aria-expanded', 'false');
             }
         });
     }
 
-    // ===== NAVIGATION =====
+    /* ===== NAVIGATION ===== */
     setupNavigation() {
         const navbar = document.getElementById('navbar');
-        let lastScrollTop = 0;
+        if (!navbar) return;
+
+        let lastScroll = 0;
 
         window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // Add/remove scrolled class
-            if (scrollTop > 100) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+            const scrolled = window.scrollY;
 
-            // Hide/show navbar on scroll
-            if (scrollTop > lastScrollTop && scrollTop > 200) {
+            navbar.classList.toggle('scrolled', scrolled > 100);
+
+            if (scrolled > lastScroll && scrolled > 200) {
                 navbar.style.transform = 'translateY(-100%)';
             } else {
                 navbar.style.transform = 'translateY(0)';
             }
-            
-            lastScrollTop = scrollTop;
+
+            lastScroll = scrolled;
         });
 
-        // Active navigation highlighting
+        // Highlight active section
         const sections = document.querySelectorAll('section[id]');
         const navLinks = document.querySelectorAll('.nav-link');
 
         window.addEventListener('scroll', () => {
             let current = '';
             sections.forEach(section => {
-                const sectionTop = section.offsetTop - 100;
-                const sectionHeight = section.offsetHeight;
-                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-                    current = section.getAttribute('id');
+                const start = section.offsetTop - 120;
+                const end = start + section.offsetHeight;
+                if (window.scrollY >= start && window.scrollY < end) {
+                    current = section.id;
                 }
             });
 
             navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${current}`) {
-                    link.classList.add('active');
-                }
+                link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
             });
         });
     }
 
-
-    // ===== TESTIMONIALS SLIDER =====
+    /* ===== TESTIMONIALS SLIDER ===== */
     setupTestimonials() {
-        const testimonialCards = document.querySelectorAll('.testimonial-card');
+        const cards = document.querySelectorAll('.testimonial-card');
         const dots = document.querySelectorAll('.dot');
         const prevBtn = document.querySelector('.prev-btn');
         const nextBtn = document.querySelector('.next-btn');
-        let currentSlide = 0;
+        let current = 0;
 
-        if (testimonialCards.length === 0) return;
+        if (cards.length === 0) return;
 
-        const showSlide = (index) => {
-            testimonialCards.forEach((card, i) => {
-                card.classList.toggle('active', i === index);
-            });
-            
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
+        const show = (i) => {
+            cards.forEach((c, idx) => c.classList.toggle('active', idx === i));
+            dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
         };
 
-        const nextSlide = () => {
-            currentSlide = (currentSlide + 1) % testimonialCards.length;
-            showSlide(currentSlide);
+        const next = () => {
+            current = (current + 1) % cards.length;
+            show(current);
         };
 
-        const prevSlide = () => {
-            currentSlide = (currentSlide - 1 + testimonialCards.length) % testimonialCards.length;
-            showSlide(currentSlide);
+        const prev = () => {
+            current = (current - 1 + cards.length) % cards.length;
+            show(current);
         };
 
-        // Event listeners
-        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', next);
+        prevBtn?.addEventListener('click', prev);
 
-        dots.forEach((dot, index) => {
+        dots.forEach((dot, idx) => {
             dot.addEventListener('click', () => {
-                currentSlide = index;
-                showSlide(currentSlide);
+                current = idx;
+                show(current);
             });
         });
 
-        // Auto-play testimonials
-        setInterval(nextSlide, 5000);
+        this.testimonialInterval = setInterval(next, 5000);
 
-        // Pause on hover
         const slider = document.querySelector('.testimonials-slider');
+
         if (slider) {
-            slider.addEventListener('mouseenter', () => {
-                clearInterval(this.testimonialInterval);
-            });
-            
+            slider.addEventListener('mouseenter', () => clearInterval(this.testimonialInterval));
             slider.addEventListener('mouseleave', () => {
-                this.testimonialInterval = setInterval(nextSlide, 5000);
+                this.testimonialInterval = setInterval(next, 5000);
             });
         }
     }
 
-    // ===== CONTACT FORM =====
+    /* ===== CONTACT FORM ===== */
     setupContactForm() {
         const form = document.getElementById('contact-form');
         const status = document.getElementById('form-status');
@@ -182,147 +167,115 @@ class ManhattanLegalApp {
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-            
-            // Validate form
-            if (!this.validateForm(data)) {
-                return;
-            }
 
-            // Show loading state
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            submitBtn.disabled = true;
+            const data = Object.fromEntries(new FormData(form));
+            if (!this.validateForm(data)) return;
+
+            const btn = form.querySelector('button[type="submit"]');
+            const original = btn.innerHTML;
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
 
             try {
-                // Simulate API call
                 await this.simulateFormSubmission(data);
-                
-                // Show success message
-                this.showFormStatus('success', 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.');
+                this.showFormStatus('success', 'Thank you! Your message has been sent successfully.');
                 form.reset();
-                
-            } catch (error) {
-                // Show error message
-                this.showFormStatus('error', 'Sorry, there was an error sending your message. Please try again or call us directly.');
+            } catch {
+                this.showFormStatus('error', 'Error sending message. Please try again.');
             } finally {
-                // Reset button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                btn.innerHTML = original;
+                btn.disabled = false;
             }
         });
 
-        // Real-time validation
-        const inputs = form.querySelectorAll('input, textarea, select');
-        inputs.forEach(input => {
-            input.addEventListener('blur', () => {
-                this.validateField(input);
-            });
-            
-            input.addEventListener('input', () => {
-                this.clearFieldError(input);
-            });
+        form.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('blur', () => this.validateField(input));
+            input.addEventListener('input', () => this.clearFieldError(input));
         });
     }
 
     validateForm(data) {
-        let isValid = true;
-        const requiredFields = ['name', 'email', 'message'];
-        
-        requiredFields.forEach(field => {
-            const input = document.getElementById(field);
-            if (!data[field] || data[field].trim() === '') {
-                this.showFieldError(input, 'This field is required');
-                isValid = false;
-            } else if (field === 'email' && !this.isValidEmail(data[field])) {
-                this.showFieldError(input, 'Please enter a valid email address');
-                isValid = false;
+        const required = ['name', 'email', 'message'];
+        let valid = true;
+
+        required.forEach(f => {
+            const input = document.getElementById(f);
+            if (!data[f]?.trim()) {
+                this.showFieldError(input, 'Required field');
+                valid = false;
+            } else if (f === 'email' && !this.isValidEmail(data[f])) {
+                this.showFieldError(input, 'Invalid email');
+                valid = false;
             }
         });
 
-        return isValid;
+        return valid;
     }
 
     validateField(input) {
         const value = input.value.trim();
-        const fieldName = input.name;
-        
+
         if (input.hasAttribute('required') && !value) {
-            this.showFieldError(input, 'This field is required');
+            this.showFieldError(input, 'Required field');
             return false;
         }
-        
-        if (fieldName === 'email' && value && !this.isValidEmail(value)) {
-            this.showFieldError(input, 'Please enter a valid email address');
+
+        if (input.name === 'email' && value && !this.isValidEmail(value)) {
+            this.showFieldError(input, 'Invalid email');
             return false;
         }
-        
+
         this.clearFieldError(input);
         return true;
     }
 
-    showFieldError(input, message) {
+    showFieldError(input, msg) {
         this.clearFieldError(input);
         input.classList.add('error');
-        
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'field-error';
-        errorDiv.textContent = message;
-        errorDiv.style.color = '#dc2626';
-        errorDiv.style.fontSize = '0.875rem';
-        errorDiv.style.marginTop = '0.25rem';
-        
-        input.parentNode.appendChild(errorDiv);
+
+        const div = document.createElement('div');
+        div.className = 'field-error';
+        div.textContent = msg;
+        div.style.color = '#dc2626';
+        div.style.fontSize = '.875rem';
+        div.style.marginTop = '.25rem';
+
+        input.parentNode.appendChild(div);
     }
 
     clearFieldError(input) {
         input.classList.remove('error');
-        const errorDiv = input.parentNode.querySelector('.field-error');
-        if (errorDiv) {
-            errorDiv.remove();
-        }
+        const err = input.parentNode.querySelector('.field-error');
+        if (err) err.remove();
     }
 
-    showFormStatus(type, message) {
+    showFormStatus(type, msg) {
         const status = document.getElementById('form-status');
-        if (status) {
-            status.className = `form-status ${type}`;
-            status.textContent = message;
-            status.style.display = 'block';
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                status.style.display = 'none';
-            }, 5000);
-        }
+        if (!status) return;
+
+        status.className = `form-status ${type}`;
+        status.textContent = msg;
+        status.style.display = 'block';
+
+        setTimeout(() => {
+            status.style.display = 'none';
+        }, 5000);
     }
 
     isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
     async simulateFormSubmission(data) {
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Simulate occasional failure for demo
-        if (Math.random() < 0.1) {
-            throw new Error('Simulated network error');
-        }
-        
-        console.log('Form submitted:', data);
+        await new Promise(res => setTimeout(res, 1200));
+        if (Math.random() < 0.05) throw new Error('fail');
+        console.log('Form Submitted:', data);
     }
 
-
-    // ===== SCROLL ANIMATIONS =====
+    /* ===== SCROLL ANIMATIONS ===== */
     setupScrollAnimations() {
-        // Add animation classes to elements
-        const elementsToAnimate = [
+        const targets = [
             '.service-card',
             '.testimonial-card',
             '.lawyer-profile',
@@ -330,157 +283,75 @@ class ManhattanLegalApp {
             '.info-card'
         ];
 
-        elementsToAnimate.forEach(selector => {
-            document.querySelectorAll(selector).forEach((el, index) => {
+        targets.forEach(sel => {
+            document.querySelectorAll(sel).forEach((el, i) => {
                 el.classList.add('animate-on-scroll');
-                el.style.animationDelay = `${index * 0.1}s`;
+                el.style.animationDelay = `${i * 0.1}s`;
             });
         });
 
-        // Intersection Observer for scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => e.isIntersecting && e.target.classList.add('animated'));
+        }, { threshold: 0.1 });
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animated');
-                }
-            });
-        }, observerOptions);
-
-        // Observe all elements with animation class
-        document.querySelectorAll('.animate-on-scroll').forEach(el => {
-            observer.observe(el);
-        });
+        document.querySelectorAll('.animate-on-scroll')
+            .forEach(el => obs.observe(el));
     }
 
-    // ===== ACCESSIBILITY =====
+    /* ===== ACCESSIBILITY ===== */
     setupAccessibility() {
-        // Skip to main content link
-        const skipLink = document.createElement('a');
-        skipLink.href = '#main-content';
-        skipLink.textContent = 'Skip to main content';
-        skipLink.className = 'skip-link';
-        skipLink.style.cssText = `
-            position: absolute;
-            top: -40px;
-            left: 6px;
-            background: #000;
-            color: #fff;
-            padding: 8px;
-            text-decoration: none;
-            z-index: 1000;
-            transition: top 0.3s;
+        const skip = document.createElement('a');
+        skip.href = '#main-content';
+        skip.textContent = 'Skip to main content';
+        skip.className = 'skip-link';
+
+        skip.style.cssText = `
+            position:absolute; top:-40px; left:6px;
+            background:#000;color:#fff;padding:8px;
+            text-decoration:none;z-index:1000;
+            transition:top 0.3s;
         `;
-        
-        skipLink.addEventListener('focus', () => {
-            skipLink.style.top = '6px';
-        });
-        
-        skipLink.addEventListener('blur', () => {
-            skipLink.style.top = '-40px';
-        });
-        
-        document.body.insertBefore(skipLink, document.body.firstChild);
 
-        // Focus management for mobile menu
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
-        
-        if (hamburger && navMenu) {
-            hamburger.addEventListener('click', () => {
-                if (navMenu.classList.contains('active')) {
-                    const firstLink = navMenu.querySelector('.nav-link');
-                    if (firstLink) firstLink.focus();
-                }
-            });
-        }
+        skip.addEventListener('focus', () => skip.style.top = '6px');
+        skip.addEventListener('blur', () => skip.style.top = '-40px');
 
-        // ARIA labels and roles
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            if (!button.getAttribute('aria-label') && !button.textContent.trim()) {
-                button.setAttribute('aria-label', 'Button');
-            }
-        });
-    }
-
-    // ===== UTILITY METHODS =====
-    debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    throttle(func, limit) {
-        let inThrottle;
-        return function() {
-            const args = arguments;
-            const context = this;
-            if (!inThrottle) {
-                func.apply(context, args);
-                inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
-            }
-        };
+        document.body.prepend(skip);
     }
 }
 
-// ===== INITIALIZATION =====
+/* ===== INITIALIZATION ===== */
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize the app
     new ManhattanLegalApp();
-    
-    // Set current year in footer
-    const currentYear = document.getElementById('current-year');
-    if (currentYear) {
-        currentYear.textContent = new Date().getFullYear();
-    }
-    
-    // Add loading class removal
+
+    const year = document.getElementById('current-year');
+    if (year) year.textContent = new Date().getFullYear();
+
     document.body.classList.add('loaded');
-    
 });
 
-// ===== SERVICE WORKER REGISTRATION =====
+/* ===== SERVICE WORKER ===== */
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
+            .then(reg => console.log('SW registered:', reg))
+            .catch(err => console.log('SW failed:', err));
     });
 }
 
-// ===== PERFORMANCE MONITORING =====
+/* ===== PERFORMANCE ===== */
 window.addEventListener('load', () => {
-    // Log performance metrics
-    if (window.performance) {
-        const perfData = window.performance.timing;
-        const loadTime = perfData.loadEventEnd - perfData.navigationStart;
-        console.log(`Page load time: ${loadTime}ms`);
+    if (performance && performance.timing) {
+        const t = performance.timing;
+        console.log(`Page load time: ${t.loadEventEnd - t.navigationStart}ms`);
     }
 });
 
-// ===== ERROR HANDLING =====
+/* ===== GLOBAL ERROR LOGGING ===== */
 window.addEventListener('error', (e) => {
-    console.error('JavaScript error:', e.error);
-    // In production, you might want to send this to an error tracking service
+    console.error('JS error:', e.error);
 });
 
-// ===== EXPORT FOR TESTING =====
-if (typeof module !== 'undefined' && module.exports) {
+/* ===== EXPORT FOR TESTING ===== */
+if (typeof module !== 'undefined') {
     module.exports = ManhattanLegalApp;
 }
