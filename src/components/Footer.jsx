@@ -2,6 +2,7 @@ import React from 'react';
 import { Scale, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 
 const Footer = () => {
+    // Always show the current year automatically
     const currentYear = new Date().getFullYear();
 
     return (
@@ -23,6 +24,7 @@ const Footer = () => {
                                     key={index}
                                     href="#"
                                     className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-accent hover:text-primary transition-all duration-300"
+                                    aria-label={`Visit our ${['Facebook', 'Twitter', 'LinkedIn', 'Instagram'][index]} page`}
                                 >
                                     <Icon className="h-5 w-5" />
                                 </a>

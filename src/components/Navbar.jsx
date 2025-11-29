@@ -6,11 +6,16 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
+    // Handle scroll event to toggle the glassmorphism effect on the navbar
     useEffect(() => {
         const handleScroll = () => {
+            // Change state when user scrolls down more than 20px
             setScrolled(window.scrollY > 20);
         };
+
         window.addEventListener('scroll', handleScroll);
+
+        // Clean up event listener to prevent memory leaks
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -25,8 +30,8 @@ const Navbar = () => {
     return (
         <nav
             className={`fixed w-full z-50 transition-all duration-300 ${scrolled
-                    ? 'bg-white/90 backdrop-blur-md shadow-md py-4'
-                    : 'bg-transparent py-6'
+                ? 'bg-white/90 backdrop-blur-md shadow-md py-4'
+                : 'bg-transparent py-6'
                 }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,8 +60,8 @@ const Navbar = () => {
                         <a
                             href="#contact"
                             className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all transform hover:scale-105 ${scrolled
-                                    ? 'bg-primary text-white hover:bg-primary-light'
-                                    : 'bg-accent text-primary hover:bg-accent-light'
+                                ? 'bg-primary text-white hover:bg-primary-light'
+                                : 'bg-accent text-primary hover:bg-accent-light'
                                 }`}
                         >
                             Free Consultation
@@ -69,6 +74,8 @@ const Navbar = () => {
                             onClick={() => setIsOpen(!isOpen)}
                             className={`p-2 rounded-lg transition-colors ${scrolled ? 'text-slate-800 hover:bg-slate-100' : 'text-white hover:bg-white/10'
                                 }`}
+                            aria-label="Toggle mobile menu"
+                            aria-expanded={isOpen}
                         >
                             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                         </button>
