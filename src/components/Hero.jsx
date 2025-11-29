@@ -26,7 +26,7 @@ const Hero = () => {
                     className="max-w-3xl"
                 >
                     <h2 className="text-accent font-medium tracking-wider uppercase mb-4">
-                        Premier Legal Services
+                        Professional Legal Services
                     </h2>
                     <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight">
                         Unwavering Commitment to <span className="text-accent">Justice</span>
@@ -54,17 +54,7 @@ const Hero = () => {
                 </motion.div>
             </div>
 
-            {/* Scroll Indicator - subtle hint to scroll down */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1, duration: 1 }}
-                className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 animate-bounce"
-            >
-                <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
-                    <div className="w-1 h-2 bg-white rounded-full" />
-                </div>
-            </motion.div>
+
         </section>
     );
 };
