@@ -25,28 +25,28 @@ const Hero = () => {
                     transition={{ duration: 0.8 }}
                     className="max-w-3xl"
                 >
-                    <h2 className="text-accent font-medium tracking-wider uppercase mb-4">
-                        Professional Legal Services
+                    <h2 className="text-accent font-medium tracking-wider uppercase mb-3 text-sm sm:text-base">
+                        Legal Services
                     </h2>
-                    <h1 className="text-5xl sm:text-6xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-4 sm:mb-6 leading-tight">
                         Unwavering Commitment to <span className="text-accent">Justice</span>
                     </h1>
-                    <p className="text-xl text-slate-300 mb-10 leading-relaxed max-w-2xl">
+                    <p className="text-base sm:text-lg md:text-xl text-slate-300 mb-6 sm:mb-10 leading-relaxed max-w-2xl">
                         Delivering exceptional legal representation with a proven track record of success.
                         We stand by your side to navigate complex legal challenges with expertise and integrity.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:justify-start">
                         <a
                             href="#contact"
-                            className="px-8 py-4 bg-accent text-primary font-bold rounded-full hover:bg-accent-light transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                            className="px-6 sm:px-8 py-3 sm:py-4 bg-accent text-primary font-bold rounded-full hover:bg-accent-light transition-all transform hover:scale-105 flex items-center justify-center gap-2 text-sm sm:text-base"
                         >
                             Get a Consultation
-                            <ArrowRight className="h-5 w-5" />
+                            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
                         </a>
                         <a
                             href="#about"
-                            className="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white/10 transition-all flex items-center justify-center"
+                            className="px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white/10 transition-all flex items-center justify-center text-sm sm:text-base"
                         >
                             Learn More
                         </a>
