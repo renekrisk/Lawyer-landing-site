@@ -47,29 +47,50 @@ const Contact = () => {
         setLoading(true);
         setStatus({ type: '', message: '' });
 
-        try {
-            // Send email using EmailJS
-            await emailjs.send(
-                import.meta.env.VITE_EMAILJS_SERVICE_ID,
-                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-                {
-                    from_name: formData.name,
-                    from_email: formData.email,
-                    service_type: formData.service || 'Not specified',
-                    message: formData.message
-                },
-                import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-            );
+        // Check if backend is enabled
+        const useBackend = import.meta.env.VITE_USE_BACKEND === 'true';
 
-            setStatus({
-                type: 'success',
-                message: 'Thank you! Your message has been sent successfully. We\'ll get back to you soon.'
-            });
+        try {
+            if (useBackend) {
+                // Use backend API
+                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                const response = await fetch(`${apiUrl}/contact`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to send');
+
+                setStatus({
+                    type: 'success',
+                    message: 'Thank you! Your message has been sent successfully. We\'ll get back to you soon.'
+                });
+            } else {
+                // Use EmailJS
+                await emailjs.send(
+                    import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                    import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                    {
+                        from_name: formData.name,
+                        from_email: formData.email,
+                        service_type: formData.service || 'Not specified',
+                        message: formData.message
+                    },
+                    import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+                );
+
+                setStatus({
+                    type: 'success',
+                    message: 'Thank you! Your message has been sent successfully. We\'ll get back to you soon.'
+                });
+            }
 
             // Reset form
             setFormData({ name: '', email: '', service: '', message: '' });
         } catch (error) {
-            console.error('EmailJS error:', error);
+            console.error('Form submission error:', error);
             setStatus({
                 type: 'error',
                 message: 'Oops! Something went wrong. Please try again or contact us directly.'
